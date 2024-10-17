@@ -8,12 +8,30 @@ const Queue = require('../lib/Queue')
 
 function processReturns(queue) {
   // your code here
+  
+  const filteredQueue = new Queue();
+  const size = queue.size();
+
+  for (let i = 0; i < size; i++) {
+    const person = queue.dequeue();
+    
+    const totalLateFee = person.books.reduce((total, book) => {
+      return total + (book.daysLate > 0 ? book.daysLate * 2 : 0);
+    }, 0);
+
+    if (totalLateFee > 0) {
+      filteredQueue.enqueue(person);
+    } else {
+      console.log(`${person.name} has no late fees.`);
+    }
+  }
+  queue.items = filteredQueue.items;
 }
 
 const returns = new Queue();
-returns.push({ name: "Alice", books: [{ title: "Book 1", daysLate: 0 }, { title: "Book 2", daysLate: 5 }] });
-returns.push({ name: "Bob", books: [{ title: "Book 3", daysLate: 0 }] });
-returns.push({ name: "Charlie", books: [{ title: "Book 4", daysLate: 2 }, { title: "Book 5", daysLate: 4 }] });
+returns.enqueue({ name: "Alice", books: [{ title: "Book 1", daysLate: 0 }, { title: "Book 2", daysLate: 5 }] });
+returns.enqueue({ name: "Bob", books: [{ title: "Book 3", daysLate: 0 }] });
+returns.enqueue({ name: "Charlie", books: [{ title: "Book 4", daysLate: 2 }, { title: "Book 5", daysLate: 4 }] });
 
 processReturns(returns);
 console.log(returns.printQueue());
